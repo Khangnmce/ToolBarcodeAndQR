@@ -2,7 +2,7 @@
 
 Web app tao QR Code va Barcode hang loat tu file Excel/CSV, xuat ZIP.
 
-**Live demo:** [Xem tren Streamlit Cloud](#) *(cap nhat sau khi deploy)*
+**Live demo:** https://toolbarcodeandqr-pbv92vy4sdarxhhqgunsw9.streamlit.app/ **
 
 ---
 
