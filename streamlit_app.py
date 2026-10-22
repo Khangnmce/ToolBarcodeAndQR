@@ -30,10 +30,43 @@ st.markdown(
     """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
-    /* Font Be Vietnam Pro toan bo ung dung */
-    html, body, [class*="css"], .stApp, h1, h2, h3, h4, p, span, div, button, input, select, label, .stMarkdown {
+    /* Font Be Vietnam Pro chi ap dung cho cac vung van ban cu the, KHONG de len icon font */
+    html, body, .stApp {
         font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }
+
+    h1, h2, h3, h4, p, label, .stMarkdown, .stMarkdown *, .section-title {
+        font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }
+
+    /* O nhap lieu va nut bam */
+    .stTextInput input,
+    [data-baseweb="select"] *,
+    .stButton > button,
+    .stDownloadButton > button {
+        font-family: 'Be Vietnam Pro', sans-serif !important;
+    }
+
+    /* Bao ve icon Material Symbols khong bi bien thanh chu ligature 'upload' */
+    [class*="material-symbol"],
+    [class*="material-symbols"],
+    [class*="material-icons"],
+    .material-symbols-rounded,
+    .material-symbols-outlined,
+    span[data-testid*="Icon"],
+    span[data-testid*="icon"],
+    span[translate="no"] {
+        font-family: 'Material Symbols Rounded', 'Material Symbols Outlined', 'Material Icons' !important;
+        font-style: normal !important;
+        letter-spacing: normal !important;
+        text-transform: none !important;
+        white-space: nowrap !important;
+        word-wrap: normal !important;
+        direction: ltr !important;
+        -webkit-font-feature-settings: 'liga' 1 !important;
+        font-feature-settings: 'liga' 1 !important;
     }
 
     /* Nen ung dung: Den sau toi gian */
@@ -69,7 +102,7 @@ st.markdown(
         background-color: #121214 !important;
         border: 1px dashed #3f3f46 !important;
         border-radius: 8px !important;
-        padding: 1.4rem 1.2rem !important;
+        padding: 1.2rem 1rem !important;
         transition: border-color 0.2s ease, background-color 0.2s ease;
     }
 
@@ -79,16 +112,7 @@ st.markdown(
         background-color: #161619 !important;
     }
 
-    [data-testid="stFileUploaderDropzoneInstructions"] {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 1.2rem !important;
-        flex-wrap: wrap !important;
-    }
-
-    /* Nut Browse files ben trong Dropzone */
+    /* Nut Browse / Upload files ben trong Dropzone */
     [data-testid="stFileUploadDropzone"] button,
     [data-testid="stFileUploader"] section button {
         background-color: #ffffff !important;
@@ -97,8 +121,13 @@ st.markdown(
         border-radius: 6px !important;
         font-weight: 600 !important;
         font-size: 0.85rem !important;
-        padding: 0.45rem 1.1rem !important;
+        padding: 0.45rem 1rem !important;
         cursor: pointer !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.45rem !important;
+        white-space: nowrap !important;
         transition: all 0.2s ease !important;
     }
 
@@ -107,6 +136,20 @@ st.markdown(
         background-color: #e4e4e7 !important;
         color: #000000 !important;
         border-color: #e4e4e7 !important;
+    }
+
+    /* Gioi han icon ben trong nut upload, ngan chu tran hoac de len label */
+    [data-testid="stFileUploadDropzone"] button [class*="material-symbol"],
+    [data-testid="stFileUploadDropzone"] button span[translate="no"] {
+        font-size: 1.15rem !important;
+        width: 1.15rem !important;
+        height: 1.15rem !important;
+        line-height: 1.15rem !important;
+        color: #000000 !important;
+        overflow: hidden !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     /* The hien thi tep da tai len */
