@@ -67,11 +67,11 @@ def render_code_to_bytes(code: str, mode: str, img_format: str) -> tuple:
         code128_class = python_barcode.get_barcode_class("code128")
         code128_obj = code128_class(str(code), writer=writer)
 
-        # Ghi barcode vao buffer; write_text=True hien thi so ben duoi vach
+        # Ghi barcode vao buffer; write_text=False khong hien thi ma ben duoi vach (bao mat)
         code128_obj.write(
             buffer,
             options={
-                "write_text": True,
+                "write_text": False,
                 "format": pil_format,
             },
         )

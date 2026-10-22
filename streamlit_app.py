@@ -358,7 +358,8 @@ def render_code_to_bytes(code: str, mode: str, img_format: str) -> tuple:
         writer       = ImageWriter()
         code128_cls  = python_barcode.get_barcode_class("code128")
         code128_obj  = code128_cls(str(code), writer=writer)
-        code128_obj.write(buffer, options={"write_text": True, "format": pil_format})
+        # Khong in chu/so ben duoi vach barcode vi tinh bao mat
+        code128_obj.write(buffer, options={"write_text": False, "format": pil_format})
 
     return f"{code}.{ext.lower()}", buffer.getvalue()
 
