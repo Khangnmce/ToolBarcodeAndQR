@@ -1,7 +1,8 @@
 # =============================================================================
 # streamlit_app.py - Web App Tao QR Code & Barcode hang loat tu Excel/CSV
-# Framework : Streamlit
-# Deploy    : Streamlit Cloud (ket noi GitHub repo)
+# Giao dien: Phong cach toi gian tone Trang - Den (Monochrome)
+# Nhap font: Be Vietnam Pro (Google Fonts)
+# Cam hung nhan dien: DV Center Can Tho
 # =============================================================================
 
 import io
@@ -18,92 +19,253 @@ from barcode.writer import ImageWriter
 from PIL import Image
 
 # ---------------------------------------------------------------------------
-# CAU HINH TRANG
+# CAU HINH TRANG STREAMLIT
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="QR & Barcode Generator",
-    page_icon="assets/favicon.png" if __import__("os").path.exists("assets/favicon.png") else ":bar_chart:",
+    page_title="DV Center | Tao Ma QR & Barcode Hang Loat",
+    page_icon="https://fonts.gstatic.com/s/e/notoemoji/latest/25fc/512.png",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-
 # ---------------------------------------------------------------------------
-# CSS TUNG CHINH - DARK THEME HIEN DAI
+# CSS TUY BIEN: TONE TRANG DEN - FONT BE VIETNAM PRO - PHONG CACH DV CENTER
 # ---------------------------------------------------------------------------
 st.markdown(
     """
     <style>
-    /* Nen trang toi */
-    .stApp { background-color: #0f1117; }
+    @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap');
 
-    /* Tieu de chinh */
-    h1 {
-        background: linear-gradient(90deg, #4fc3f7, #1565c0);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2.2rem !important;
-        font-weight: 800 !important;
-        margin-bottom: 0 !important;
+    /* Font mac dinh toan bo ung dung */
+    html, body, [class*="css"], .stApp, h1, h2, h3, h4, p, span, div, button, input, select, label, .stMarkdown {
+        font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
 
-    /* Card bao bo cai dat */
-    .settings-card {
-        background: #1a1d27;
-        border: 1px solid #2d3148;
+    /* Nen ung dung: Den sau tuyet doi */
+    .stApp {
+        background-color: #09090b !important;
+        color: #f4f4f5 !important;
+    }
+
+    /* An bot thanh toolbar mac dinh cua Streamlit neu co */
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+
+    /* Header Container thuong hieu DV Center */
+    .dv-brand-container {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        padding: 1.2rem 1.4rem;
+        background: linear-gradient(180deg, #18181b 0%, #111113 100%);
+        border: 1px solid #27272a;
         border-radius: 14px;
-        padding: 1.6rem 1.8rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .dv-logo-wrapper {
+        flex-shrink: 0;
+        width: 60px;
+        height: 60px;
+        background: #000000;
+        border: 1.5px solid #ffffff;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+    }
+
+    .dv-brand-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dv-brand-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: #ffffff;
+        text-transform: uppercase;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .dv-brand-subtitle {
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        color: #a1a1aa;
+        text-transform: uppercase;
+        margin-top: 0.3rem;
+    }
+
+    .dv-brand-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: #ffffff;
+        background: #27272a;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        margin-top: 0.4rem;
+        width: fit-content;
+    }
+
+    /* Tieu de section / buoc thuc hien */
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #ffffff;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        background-color: #18181b;
+        border: 1px solid #3f3f46;
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        margin-bottom: 0.8rem;
+    }
+
+    /* The bao boc bo cuc */
+    .card-box {
+        background: #121214;
+        border: 1px solid #27272a;
+        border-radius: 12px;
+        padding: 1.25rem 1.4rem;
         margin-bottom: 1.2rem;
     }
 
-    /* Nhan section */
-    .section-label {
-        color: #8899aa;
-        font-size: 0.78rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 0.4rem;
-    }
-
-    /* Nut chinh */
-    .stButton > button {
-        background: linear-gradient(135deg, #1565c0, #1976d2) !important;
-        color: white !important;
-        border: none !important;
+    /* Upload zone styling */
+    [data-testid="stFileUploader"] {
+        background-color: #121214 !important;
+        border: 1px dashed #3f3f46 !important;
         border-radius: 10px !important;
+        padding: 0.75rem !important;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    [data-testid="stFileUploader"]:hover {
+        border-color: #ffffff !important;
+        background-color: #18181b !important;
+    }
+
+    /* O nhap lieu text & selectbox */
+    .stTextInput input {
+        background-color: #18181b !important;
+        color: #ffffff !important;
+        border: 1px solid #3f3f46 !important;
+        border-radius: 8px !important;
+        font-weight: 500 !important;
+    }
+    .stTextInput input:focus {
+        border-color: #ffffff !important;
+        box-shadow: 0 0 0 1px #ffffff !important;
+    }
+
+    [data-baseweb="select"] > div {
+        background-color: #18181b !important;
+        border: 1px solid #3f3f46 !important;
+        border-radius: 8px !important;
+        color: #ffffff !important;
+    }
+
+    /* Nut bam chinh: Trang tuyet doi chu den */
+    .stButton > button {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #ffffff !important;
+        border-radius: 8px !important;
         font-weight: 700 !important;
-        font-size: 1rem !important;
+        font-size: 0.95rem !important;
+        letter-spacing: 0.04em !important;
         padding: 0.65rem 1.4rem !important;
-        transition: opacity 0.2s !important;
+        transition: all 0.2s ease !important;
     }
-    .stButton > button:hover { opacity: 0.85 !important; }
-
-    /* Progress bar */
-    .stProgress > div > div { background-color: #1976d2 !important; }
-
-    /* Alert success */
-    .success-box {
-        background: #1b3a2d;
-        border-left: 4px solid #43a047;
-        border-radius: 8px;
-        padding: 0.9rem 1.1rem;
-        color: #a5d6a7;
-        font-size: 0.95rem;
+    .stButton > button:hover {
+        background-color: #e4e4e7 !important;
+        color: #000000 !important;
+        border-color: #ffffff !important;
+        box-shadow: 0 0 16px rgba(255, 255, 255, 0.2) !important;
     }
 
-    /* Alert error */
-    .error-box {
-        background: #3a1b1b;
-        border-left: 4px solid #e53935;
-        border-radius: 8px;
-        padding: 0.9rem 1.1rem;
-        color: #ef9a9a;
-        font-size: 0.95rem;
+    /* Nut phu (Vi du: Tu dong phat hien cot) */
+    .secondary-btn button {
+        background-color: #18181b !important;
+        color: #fafafa !important;
+        border: 1px solid #3f3f46 !important;
+    }
+    .secondary-btn button:hover {
+        background-color: #27272a !important;
+        border-color: #ffffff !important;
+        color: #ffffff !important;
+    }
+
+    /* Download button */
+    .stDownloadButton > button {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #ffffff !important;
+        border-radius: 8px !important;
+        font-weight: 800 !important;
+        font-size: 1rem !important;
+        letter-spacing: 0.04em !important;
+        padding: 0.75rem 1.5rem !important;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.25) !important;
+    }
+    .stDownloadButton > button:hover {
+        background-color: #e4e4e7 !important;
+        color: #000000 !important;
+    }
+
+    /* Progress bar: Mau trang tren nen xam */
+    .stProgress > div > div > div > div {
+        background-color: #ffffff !important;
+    }
+    .stProgress > div > div {
+        background-color: #27272a !important;
+        border-radius: 6px !important;
+        height: 10px !important;
+    }
+
+    /* Hop thong bao trang den (Khong dung icon hay ky hieu) */
+    .mono-notice {
+        background-color: #141416;
+        border-left: 3px solid #ffffff;
+        border-top: 1px solid #27272a;
+        border-right: 1px solid #27272a;
+        border-bottom: 1px solid #27272a;
+        padding: 0.85rem 1rem;
+        border-radius: 6px;
+        color: #f4f4f5;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin: 0.8rem 0;
+    }
+
+    .mono-alert {
+        background-color: #18181b;
+        border-left: 3px solid #a1a1aa;
+        border-top: 1px solid #27272a;
+        border-right: 1px solid #27272a;
+        border-bottom: 1px solid #27272a;
+        padding: 0.85rem 1rem;
+        border-radius: 6px;
+        color: #f4f4f5;
+        font-size: 0.9rem;
+        margin: 0.8rem 0;
     }
 
     /* Divider */
-    hr { border-color: #2d3148 !important; }
+    hr {
+        border-color: #27272a !important;
+        margin: 1.4rem 0 !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -111,13 +273,13 @@ st.markdown(
 
 
 # ===========================================================================
-# HAM LOI: auto_detect_code_column
-# Cham diem tung cot de tim cot co kha nang la chua ma code nhat.
+# HAM HO TRO: auto_detect_code_column
+# Cham diem tung cot de tim cot co kha nang la chua ma code nhat
 # ===========================================================================
 def auto_detect_code_column(df: pd.DataFrame) -> str:
     """
-    Phan tich DataFrame (mau) va tra ve ten cot co kha nang cao nhat
-    la chua ma code dua tren 4 tieu chi thong ke.
+    Phan tich DataFrame va tra ve ten cot co kha nang cao nhat
+    la chua ma code dua tren 4 tieu chi danh gia.
     """
     best_col   = None
     best_score = -1.0
@@ -163,8 +325,8 @@ def auto_detect_code_column(df: pd.DataFrame) -> str:
 
 
 # ===========================================================================
-# HAM LOI: render_code_to_bytes
-# Sinh anh QR hoac Barcode vao RAM (khong ghi o cung).
+# HAM XU LY: render_code_to_bytes
+# Sinh anh QR hoac Barcode truc tiep trong RAM
 # ===========================================================================
 def render_code_to_bytes(code: str, mode: str, img_format: str) -> tuple:
     """Tra ve (filename, raw_bytes) cua anh QR hoac Barcode."""
@@ -192,9 +354,8 @@ def render_code_to_bytes(code: str, mode: str, img_format: str) -> tuple:
 
 
 # ===========================================================================
-# HAM LOI: build_zip_in_memory
-# Doc file, loc ma, sinh anh da luong, dong goi ZIP trong RAM.
-# Tra ve bytes cua file ZIP.
+# HAM XU LY: build_zip_in_memory
+# Doc du lieu, loc ma, sinh anh song song va dong goi ZIP trong RAM
 # ===========================================================================
 def build_zip_in_memory(
     file_bytes: bytes,
@@ -202,30 +363,14 @@ def build_zip_in_memory(
     col_name: str,
     mode: str,
     img_format: str,
-    progress_callback,          # callback(current, total)
+    progress_callback,
 ) -> bytes:
-    """
-    Toan bo qua trinh xu ly chay trong RAM.
-
-    Args:
-        file_bytes        : Noi dung file Excel/CSV upload len.
-        file_ext          : Duoi file ('xlsx', 'csv', ...).
-        col_name          : Ten cot chua ma.
-        mode              : Loai ma.
-        img_format        : Dinh dang anh.
-        progress_callback : Ham cap nhat tien trinh.
-
-    Returns:
-        Noi dung file ZIP dang bytes.
-    """
-    # -- Doc file tu bytes --------------------------------------------------
     buf = io.BytesIO(file_bytes)
     if file_ext in ("xls", "xlsx", "xlsm"):
         df = pd.read_excel(buf, usecols=[col_name])
     else:
         df = pd.read_csv(buf, usecols=[col_name])
 
-    # -- Loc danh sach ma duy nhat ------------------------------------------
     codes = (
         df[col_name]
         .dropna()
@@ -238,15 +383,14 @@ def build_zip_in_memory(
     )
 
     if not codes:
-        raise ValueError("Danh sach ma rong sau khi loc. Kiem tra lai file va ten cot.")
+        raise ValueError("Danh sach ma rong sau khi loc. Vui long kiem tra lai tep va cot da chon.")
 
-    total      = len(codes)
-    completed  = 0
+    total       = len(codes)
+    completed   = 0
     compression = (
         zipfile.ZIP_STORED if img_format.upper() == "PNG" else zipfile.ZIP_DEFLATED
     )
 
-    # -- Sinh anh da luong va ghi thang vao ZIP trong RAM -------------------
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, mode="w", compression=compression) as zf:
         with ThreadPoolExecutor(max_workers=16) as executor:
@@ -264,45 +408,74 @@ def build_zip_in_memory(
 
 
 # ===========================================================================
-# GIAO DIEN CHINH STREAMLIT
+# GIAO DIEN CHINH (UI)
 # ===========================================================================
 
-# -- Tieu de & mo ta --------------------------------------------------------
-st.markdown("<h1>QR & Barcode Bulk Generator</h1>", unsafe_allow_html=True)
+# -- BRANDING BANNER: DV CENTER CAN THO (VECTOR MONOGRAM LOGO) -------------
 st.markdown(
-    "<p style='color:#6b7280; margin-top:0.2rem; margin-bottom:1.5rem;'>"
-    "Tao ma hang loat tu file Excel/CSV va tai ve file ZIP</p>",
+    """
+    <div class="dv-brand-container">
+        <div class="dv-logo-wrapper">
+            <!-- Vector Logo Monogram DV hinh hoc phong cach DV Center Can Tho -->
+            <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Chu D: Duong thang doc va canh bo goc sac ben phai -->
+                <path d="M16 22H42C56 22 66 32 66 50C66 68 56 78 42 78H16V22Z" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round"/>
+                <path d="M28 34H40C48 34 54 40 54 50C54 60 48 66 40 66H28V34Z" fill="#FFFFFF"/>
+                <!-- Chu V: Goc cat nghieng sac net vuon qua chu D -->
+                <path d="M50 22L70 78L88 22" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div class="dv-brand-info">
+            <div class="dv-brand-title">DV CENTER CẦN THƠ</div>
+            <div class="dv-brand-subtitle">Hệ Thống Tạo Mã QR Code & Barcode Tập Trung</div>
+            <div class="dv-brand-tag">GIAO DIỆN TỐI GIẢN • HIỆU SUẤT CAO</div>
+        </div>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
-st.divider()
 
-# -- Khu vuc upload file ----------------------------------------------------
-st.markdown("<div class='section-label'>Buoc 1 — Chon file du lieu</div>", unsafe_allow_html=True)
+# -- BUOC 1: TAI TEP DU LIEU ------------------------------------------------
+st.markdown("<div class='section-badge'>BƯỚC 1: TẢI LÊN TỆP DỮ LIỆU</div>", unsafe_allow_html=True)
 uploaded_file = st.file_uploader(
-    label="Tai len file Excel hoac CSV",
+    label="Tải lên tệp Excel hoặc CSV",
     type=["xlsx", "xls", "xlsm", "csv"],
     label_visibility="collapsed",
+    help="Định dạng hỗ trợ: .xlsx, .xls, .xlsm, .csv",
 )
 
-# -- Khu vuc cai dat --------------------------------------------------------
-st.markdown("<div class='section-label' style='margin-top:1.2rem;'>Buoc 2 — Cau hinh</div>", unsafe_allow_html=True)
+if uploaded_file is not None:
+    st.markdown(
+        f"<div class='mono-notice'>Tệp đã nạp: <strong>{uploaded_file.name}</strong> ({uploaded_file.size / 1024:.1f} KB)</div>",
+        unsafe_allow_html=True,
+    )
 
-col_left, col_right = st.columns([1, 1], gap="medium")
+st.markdown("<hr/>", unsafe_allow_html=True)
+
+# -- BUOC 2: CAU HINH THONG SO MA -------------------------------------------
+st.markdown("<div class='section-badge'>BƯỚC 2: CẤU HÌNH THÔNG SỐ VÀ CỘT MÃ</div>", unsafe_allow_html=True)
+
+col_left, col_right = st.columns([1, 1], gap="large")
 
 with col_left:
     col_name = st.text_input(
-        label="Ten cot chua ma",
+        label="Tên cột chứa mã trong bảng tính",
         value="MaKH",
-        help="Ten chinh xac cua cot trong file Excel/CSV chua gia tri ma can tao.",
+        help="Nhập chính xác tên cột chứa dữ liệu mã code cần tạo.",
     )
+
     # Nut tu dong phat hien cot
-    if st.button("Tu dong phat hien cot", use_container_width=True):
+    st.markdown("<div class='secondary-btn'>", unsafe_allow_html=True)
+    if st.button("Tự động phát hiện cột mã", use_container_width=True):
         if uploaded_file is None:
-            st.warning("Vui long upload file truoc.")
+            st.markdown(
+                "<div class='mono-alert'>Vui lòng tải lên tệp dữ liệu trước khi phát hiện cột.</div>",
+                unsafe_allow_html=True,
+            )
         else:
             try:
                 raw = uploaded_file.read()
-                uploaded_file.seek(0)   # Reset stream sau khi doc
+                uploaded_file.seek(0)
                 ext = uploaded_file.name.rsplit(".", 1)[-1].lower()
                 buf = io.BytesIO(raw)
                 if ext in ("xls", "xlsx", "xlsm"):
@@ -312,42 +485,58 @@ with col_left:
 
                 detected = auto_detect_code_column(sample_df)
                 if detected:
-                    st.success(f"Phat hien cot: **{detected}**")
-                    st.info("Copy ten cot tren vao o 'Ten cot chua ma' phia tren.")
+                    st.markdown(
+                        f"<div class='mono-notice'>Đã phát hiện cột phù hợp: <strong>{detected}</strong>.<br/>"
+                        f"Vui lòng điền tên trên vào ô Tên cột nếu chưa trùng khớp.</div>",
+                        unsafe_allow_html=True,
+                    )
                 else:
-                    st.warning("Khong phat hien duoc cot phu hop. Vui long nhap thu cong.")
+                    st.markdown(
+                        "<div class='mono-alert'>Không thể tự động nhận diện cột phù hợp. Vui lòng nhập thủ công.</div>",
+                        unsafe_allow_html=True,
+                    )
             except Exception as e:
-                st.error(f"Loi khi doc file: {e}")
+                st.markdown(
+                    f"<div class='mono-alert'>Lỗi khi đọc tệp dữ liệu: {e}</div>",
+                    unsafe_allow_html=True,
+                )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col_right:
     code_type = st.selectbox(
-        label="Loai ma",
+        label="Loại mã cần tạo",
         options=["QR Code", "Barcode (Code 128)"],
         index=0,
     )
     img_format = st.selectbox(
-        label="Dinh dang anh",
+        label="Định dạng hình ảnh xuất",
         options=["PNG", "JPG"],
         index=0,
-        help="PNG: chat luong tot hon. JPG: nhe hon.",
+        help="PNG cho chất lượng sắc nét cao. JPG dung lượng nhẹ hơn.",
     )
 
-st.divider()
+st.markdown("<hr/>", unsafe_allow_html=True)
 
-# -- Nut bat dau ------------------------------------------------------------
-st.markdown("<div class='section-label'>Buoc 3 — Tao ma</div>", unsafe_allow_html=True)
+# -- BUOC 3: KHOI TAO MA & TAI TEP NEN --------------------------------------
+st.markdown("<div class='section-badge'>BƯỚC 3: XỬ LÝ VÀ XUẤT TỆP NÉN</div>", unsafe_allow_html=True)
 
-if st.button("BAT DAU TAO MA & TAI ZIP", use_container_width=True, type="primary"):
+if st.button("BẮT ĐẦU TẠO MÃ VÀ XUẤT TẬP TIN NÉN", use_container_width=True, type="primary"):
     # Kiem tra dau vao
     if uploaded_file is None:
-        st.error("Vui long upload file Excel/CSV truoc.")
+        st.markdown(
+            "<div class='mono-alert'>Yêu cầu tải lên tệp Excel hoặc CSV trước khi tiến hành.</div>",
+            unsafe_allow_html=True,
+        )
     elif not col_name.strip():
-        st.error("Vui long nhap ten cot chua ma.")
+        st.markdown(
+            "<div class='mono-alert'>Vui lòng nhập tên cột chứa mã.</div>",
+            unsafe_allow_html=True,
+        )
     else:
         file_ext = uploaded_file.name.rsplit(".", 1)[-1].lower()
         file_bytes = uploaded_file.read()
 
-        # Kiem tra ten cot ton tai truoc khi chay toan bo
+        # Kiem tra tieu de cot
         try:
             buf = io.BytesIO(file_bytes)
             if file_ext in ("xls", "xlsx", "xlsm"):
@@ -356,33 +545,39 @@ if st.button("BAT DAU TAO MA & TAI ZIP", use_container_width=True, type="primary
                 header_df = pd.read_csv(buf, nrows=0)
 
             if col_name not in header_df.columns:
-                st.error(
-                    f"Khong tim thay cot **'{col_name}'** trong file.  \n"
-                    f"Cac cot hien co: `{list(header_df.columns)}`"
+                cols_list = ", ".join([f"'{c}'" for c in header_df.columns])
+                st.markdown(
+                    f"<div class='mono-alert'>"
+                    f"Cột '{col_name}' không tồn tại trong tệp.<br/>"
+                    f"Danh sách các cột hiện có: {cols_list}."
+                    f"</div>",
+                    unsafe_allow_html=True,
                 )
                 st.stop()
         except Exception as e:
-            st.error(f"Khong the doc file: {e}")
+            st.markdown(
+                f"<div class='mono-alert'>Không thể phân tích dữ liệu tệp: {e}</div>",
+                unsafe_allow_html=True,
+            )
             st.stop()
 
-        # -- UI tien trinh -------------------------------------------------
+        # Tien trinh thuc hien
         status_text = st.empty()
         progress_bar = st.progress(0)
 
         def update_progress(current: int, total: int):
-            """Cap nhat thanh tien trinh tren Streamlit."""
             pct = int(current / total * 100)
             progress_bar.progress(pct)
             status_text.markdown(
-                f"<p style='color:#4fc3f7; font-size:0.9rem;'>"
-                f"Dang xu ly {current}/{total} anh... ({pct}%)</p>",
+                f"<div style='font-size:0.88rem; color:#d4d4d8; font-weight:500; margin-bottom:0.4rem;'>"
+                f"Tiến độ xử lý: {current} trên {total} hình ảnh ({pct}%)"
+                f"</div>",
                 unsafe_allow_html=True,
             )
 
-        # -- Chay xu ly ----------------------------------------------------
         try:
             status_text.markdown(
-                "<p style='color:#8899aa; font-size:0.9rem;'>Dang khoi dong...</p>",
+                "<div style='font-size:0.88rem; color:#a1a1aa; margin-bottom:0.4rem;'>Đang khởi tạo các tiến trình nền...</div>",
                 unsafe_allow_html=True,
             )
             zip_bytes = build_zip_in_memory(
@@ -395,14 +590,15 @@ if st.button("BAT DAU TAO MA & TAI ZIP", use_container_width=True, type="primary
             )
             progress_bar.progress(100)
             status_text.markdown(
-                "<p style='color:#66bb6a; font-weight:600;'>Hoan thanh!</p>",
+                "<div class='mono-notice'>Quá trình tạo mã đã hoàn tất thành công.</div>",
                 unsafe_allow_html=True,
             )
 
-            # -- Nut download ZIP ------------------------------------------
-            output_name = f"output_{code_type.lower().replace(' ', '_').replace('(', '').replace(')', '')}.zip"
+            # Nut tai tap tin ZIP
+            clean_type = "qr" if code_type == "QR Code" else "barcode"
+            output_name = f"DVCenter_{clean_type}_{col_name}.zip"
             st.download_button(
-                label=f"TAI XUONG FILE ZIP ({len(zip_bytes) / 1024:.0f} KB)",
+                label=f"TẢI XUỐNG TỆP NÉN ZIP ({len(zip_bytes) / 1024:.0f} KB)",
                 data=zip_bytes,
                 file_name=output_name,
                 mime="application/zip",
@@ -410,14 +606,24 @@ if st.button("BAT DAU TAO MA & TAI ZIP", use_container_width=True, type="primary
             )
 
         except ValueError as e:
-            st.error(str(e))
+            st.markdown(
+                f"<div class='mono-alert'>{str(e)}</div>",
+                unsafe_allow_html=True,
+            )
         except Exception as e:
-            st.error(f"Loi khong xac dinh: {type(e).__name__}: {e}")
+            st.markdown(
+                f"<div class='mono-alert'>Lỗi trong quá trình xử lý: {type(e).__name__} - {e}</div>",
+                unsafe_allow_html=True,
+            )
 
-# -- Footer -----------------------------------------------------------------
-st.divider()
+# -- FOOTER -----------------------------------------------------------------
+st.markdown("<hr/>", unsafe_allow_html=True)
 st.markdown(
-    "<p style='text-align:center; color:#374151; font-size:0.8rem;'>"
-    "QR & Barcode Bulk Generator &nbsp;|&nbsp; Powered by Streamlit</p>",
+    """
+    <div style='text-align:center; color:#71717a; font-size:0.75rem; letter-spacing:0.06em; line-height:1.6;'>
+        DV CENTER CẦN THƠ &bull; BẢN QUYỀN CÔNG CỤ TẠO MÃ NỘI BỘ<br/>
+        THIẾT KẾ ĐEN TRẮNG ĐỒNG BỘ NHẬN DIỆN THƯƠNG HIỆU &bull; FONT CHỮ BE VIETNAM PRO
+    </div>
+    """,
     unsafe_allow_html=True,
 )
