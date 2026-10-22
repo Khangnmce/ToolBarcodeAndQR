@@ -1,8 +1,7 @@
 # =============================================================================
 # streamlit_app.py - Web App Tao QR Code & Barcode hang loat tu Excel/CSV
-# Giao dien: Phong cach toi gian tone Trang - Den (Monochrome)
-# Nhap font: Be Vietnam Pro (Google Fonts)
-# Cam hung nhan dien: DV Center Can Tho
+# Giao dien: Toi gian trang - den (Monochrome)
+# Font chu: Be Vietnam Pro (Google Fonts)
 # =============================================================================
 
 import io
@@ -32,131 +31,100 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap');
 
-    /* Font mac dinh toan bo ung dung */
+    /* Font Be Vietnam Pro toan bo ung dung */
     html, body, [class*="css"], .stApp, h1, h2, h3, h4, p, span, div, button, input, select, label, .stMarkdown {
         font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
 
-    /* Nen ung dung: Den sau tuyet doi */
+    /* Nen ung dung: Den sau toi gian */
     .stApp {
         background-color: #09090b !important;
         color: #f4f4f5 !important;
     }
 
-    /* An bot thanh toolbar mac dinh cua Streamlit neu co */
+    /* An thanh header mac dinh */
     header[data-testid="stHeader"] {
         background-color: transparent !important;
     }
 
-    /* Header Container thuong hieu DV Center */
-    .dv-brand-container {
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-        padding: 1.2rem 1.4rem;
-        background: linear-gradient(180deg, #18181b 0%, #111113 100%);
-        border: 1px solid #27272a;
-        border-radius: 14px;
-        margin-top: 0.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    .dv-logo-wrapper {
-        flex-shrink: 0;
-        width: 60px;
-        height: 60px;
-        background: #000000;
-        border: 1.5px solid #ffffff;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
-    }
-
-    .dv-brand-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .dv-brand-title {
-        font-size: 1.4rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
+    /* Tieu de tung buoc */
+    .section-title {
         color: #ffffff;
-        text-transform: uppercase;
-        margin: 0;
-        line-height: 1.2;
-    }
-
-    .dv-brand-subtitle {
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.12em;
-        color: #a1a1aa;
-        text-transform: uppercase;
-        margin-top: 0.3rem;
-    }
-
-    .dv-brand-tag {
-        display: inline-block;
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        color: #ffffff;
-        background: #27272a;
-        padding: 0.15rem 0.5rem;
-        border-radius: 4px;
-        margin-top: 0.4rem;
-        width: fit-content;
-    }
-
-    /* Tieu de section / buoc thuc hien */
-    .section-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #ffffff;
-        font-size: 0.8rem;
+        font-size: 0.88rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        background-color: #18181b;
-        border: 1px solid #3f3f46;
-        padding: 0.35rem 0.75rem;
-        border-radius: 6px;
-        margin-bottom: 0.8rem;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.75rem;
     }
 
-    /* The bao boc bo cuc */
-    .card-box {
-        background: #121214;
-        border: 1px solid #27272a;
-        border-radius: 12px;
-        padding: 1.25rem 1.4rem;
-        margin-bottom: 1.2rem;
-    }
-
-    /* Upload zone styling */
+    /* Vung tai tep: Khong vien kep, khong chong cheo */
     [data-testid="stFileUploader"] {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    [data-testid="stFileUploadDropzone"],
+    [data-testid="stFileUploader"] section {
         background-color: #121214 !important;
         border: 1px dashed #3f3f46 !important;
-        border-radius: 10px !important;
-        padding: 0.75rem !important;
+        border-radius: 8px !important;
+        padding: 1.4rem 1.2rem !important;
         transition: border-color 0.2s ease, background-color 0.2s ease;
     }
-    [data-testid="stFileUploader"]:hover {
+
+    [data-testid="stFileUploadDropzone"]:hover,
+    [data-testid="stFileUploader"] section:hover {
         border-color: #ffffff !important;
-        background-color: #18181b !important;
+        background-color: #161619 !important;
+    }
+
+    [data-testid="stFileUploaderDropzoneInstructions"] {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 1.2rem !important;
+        flex-wrap: wrap !important;
+    }
+
+    /* Nut Browse files ben trong Dropzone */
+    [data-testid="stFileUploadDropzone"] button,
+    [data-testid="stFileUploader"] section button {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #ffffff !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        padding: 0.45rem 1.1rem !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+
+    [data-testid="stFileUploadDropzone"] button:hover,
+    [data-testid="stFileUploader"] section button:hover {
+        background-color: #e4e4e7 !important;
+        color: #000000 !important;
+        border-color: #e4e4e7 !important;
+    }
+
+    /* The hien thi tep da tai len */
+    [data-testid="stFileUploaderFile"] {
+        background-color: #121214 !important;
+        border: 1px solid #27272a !important;
+        border-radius: 6px !important;
+        padding: 0.6rem 0.8rem !important;
+        margin-top: 0.75rem !important;
+        color: #f4f4f5 !important;
     }
 
     /* O nhap lieu text & selectbox */
     .stTextInput input {
-        background-color: #18181b !important;
+        background-color: #121214 !important;
         color: #ffffff !important;
         border: 1px solid #3f3f46 !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         font-weight: 500 !important;
     }
     .stTextInput input:focus {
@@ -165,9 +133,9 @@ st.markdown(
     }
 
     [data-baseweb="select"] > div {
-        background-color: #18181b !important;
+        background-color: #121214 !important;
         border: 1px solid #3f3f46 !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         color: #ffffff !important;
     }
 
@@ -176,72 +144,75 @@ st.markdown(
         background-color: #ffffff !important;
         color: #000000 !important;
         border: 1px solid #ffffff !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         font-weight: 700 !important;
-        font-size: 0.95rem !important;
-        letter-spacing: 0.04em !important;
-        padding: 0.65rem 1.4rem !important;
+        font-size: 0.92rem !important;
+        letter-spacing: 0.02em !important;
+        padding: 0.6rem 1.2rem !important;
         transition: all 0.2s ease !important;
     }
     .stButton > button:hover {
         background-color: #e4e4e7 !important;
         color: #000000 !important;
         border-color: #ffffff !important;
-        box-shadow: 0 0 16px rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Nut phu (Vi du: Tu dong phat hien cot) */
+    /* Nut phu (Tu dong phat hien cot) */
     .secondary-btn button {
-        background-color: #18181b !important;
-        color: #fafafa !important;
+        background-color: #121214 !important;
+        color: #f4f4f5 !important;
         border: 1px solid #3f3f46 !important;
+        font-weight: 500 !important;
+        font-size: 0.88rem !important;
+        border-radius: 6px !important;
     }
     .secondary-btn button:hover {
-        background-color: #27272a !important;
+        background-color: #1f1f23 !important;
         border-color: #ffffff !important;
         color: #ffffff !important;
     }
 
-    /* Download button */
+    /* Nut tai xuong tap tin ZIP */
     .stDownloadButton > button {
         background-color: #ffffff !important;
         color: #000000 !important;
         border: 1px solid #ffffff !important;
-        border-radius: 8px !important;
-        font-weight: 800 !important;
-        font-size: 1rem !important;
-        letter-spacing: 0.04em !important;
-        padding: 0.75rem 1.5rem !important;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.25) !important;
+        border-radius: 6px !important;
+        font-weight: 700 !important;
+        font-size: 0.95rem !important;
+        letter-spacing: 0.02em !important;
+        padding: 0.7rem 1.4rem !important;
+        box-shadow: 0 0 14px rgba(255, 255, 255, 0.18) !important;
     }
     .stDownloadButton > button:hover {
         background-color: #e4e4e7 !important;
         color: #000000 !important;
+        border-color: #ffffff !important;
     }
 
-    /* Progress bar: Mau trang tren nen xam */
+    /* Thanh tien trinh */
     .stProgress > div > div > div > div {
         background-color: #ffffff !important;
     }
     .stProgress > div > div {
         background-color: #27272a !important;
-        border-radius: 6px !important;
-        height: 10px !important;
+        border-radius: 4px !important;
+        height: 8px !important;
     }
 
-    /* Hop thong bao trang den (Khong dung icon hay ky hieu) */
+    /* Thong bao trang den */
     .mono-notice {
-        background-color: #141416;
+        background-color: #121214;
         border-left: 3px solid #ffffff;
         border-top: 1px solid #27272a;
         border-right: 1px solid #27272a;
         border-bottom: 1px solid #27272a;
-        padding: 0.85rem 1rem;
+        padding: 0.75rem 1rem;
         border-radius: 6px;
         color: #f4f4f5;
-        font-size: 0.9rem;
-        font-weight: 500;
-        margin: 0.8rem 0;
+        font-size: 0.88rem;
+        margin: 0.75rem 0;
     }
 
     .mono-alert {
@@ -250,14 +221,14 @@ st.markdown(
         border-top: 1px solid #27272a;
         border-right: 1px solid #27272a;
         border-bottom: 1px solid #27272a;
-        padding: 0.85rem 1rem;
+        padding: 0.75rem 1rem;
         border-radius: 6px;
         color: #f4f4f5;
-        font-size: 0.9rem;
-        margin: 0.8rem 0;
+        font-size: 0.88rem;
+        margin: 0.75rem 0;
     }
 
-    /* Divider */
+    /* Duong phan cach */
     hr {
         border-color: #27272a !important;
         margin: 1.4rem 0 !important;
@@ -407,25 +378,33 @@ def build_zip_in_memory(
 # GIAO DIEN CHINH (UI)
 # ===========================================================================
 
+# -- TIEU DE UNG DUNG ------------------------------------------------------
+st.markdown(
+    """
+    <div style="margin-top: 0.2rem; margin-bottom: 1.8rem;">
+        <h1 style="font-size: 1.65rem; font-weight: 700; color: #ffffff; margin: 0 0 0.35rem 0; letter-spacing: -0.01em;">
+            Tạo Mã QR & Barcode Hàng Loạt
+        </h1>
+        <p style="color: #a1a1aa; font-size: 0.88rem; margin: 0; line-height: 1.5;">
+            Đọc dữ liệu từ tệp Excel hoặc CSV, tạo mã tự động và tải về tệp nén ZIP
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 # -- BUOC 1: TAI TEP DU LIEU ------------------------------------------------
-st.markdown("<div class='section-badge'>BƯỚC 1: TẢI LÊN TỆP DỮ LIỆU</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-title'>1. Tải lên tệp dữ liệu</div>", unsafe_allow_html=True)
 uploaded_file = st.file_uploader(
     label="Tải lên tệp Excel hoặc CSV",
     type=["xlsx", "xls", "xlsm", "csv"],
     label_visibility="collapsed",
-    help="Định dạng hỗ trợ: .xlsx, .xls, .xlsm, .csv",
 )
-
-if uploaded_file is not None:
-    st.markdown(
-        f"<div class='mono-notice'>Tệp đã nạp: <strong>{uploaded_file.name}</strong> ({uploaded_file.size / 1024:.1f} KB)</div>",
-        unsafe_allow_html=True,
-    )
 
 st.markdown("<hr/>", unsafe_allow_html=True)
 
 # -- BUOC 2: CAU HINH THONG SO MA -------------------------------------------
-st.markdown("<div class='section-badge'>BƯỚC 2: CẤU HÌNH THÔNG SỐ VÀ CỘT MÃ</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-title'>2. Cấu hình thông số và cột mã</div>", unsafe_allow_html=True)
 
 col_left, col_right = st.columns([1, 1], gap="large")
 
@@ -490,7 +469,7 @@ with col_right:
 st.markdown("<hr/>", unsafe_allow_html=True)
 
 # -- BUOC 3: KHOI TAO MA & TAI TEP NEN --------------------------------------
-st.markdown("<div class='section-badge'>BƯỚC 3: XỬ LÝ VÀ XUẤT TỆP NÉN</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-title'>3. Xử lý và xuất tệp nén</div>", unsafe_allow_html=True)
 
 if st.button("BẮT ĐẦU TẠO MÃ VÀ XUẤT TẬP TIN NÉN", use_container_width=True, type="primary"):
     # Kiem tra dau vao
@@ -568,7 +547,7 @@ if st.button("BẮT ĐẦU TẠO MÃ VÀ XUẤT TẬP TIN NÉN", use_container_w
 
             # Nut tai tap tin ZIP
             clean_type = "qr" if code_type == "QR Code" else "barcode"
-            output_name = f"DVCenter_{clean_type}_{col_name}.zip"
+            output_name = f"ma_{clean_type}_{col_name}.zip"
             st.download_button(
                 label=f"TẢI XUỐNG TỆP NÉN ZIP ({len(zip_bytes) / 1024:.0f} KB)",
                 data=zip_bytes,
