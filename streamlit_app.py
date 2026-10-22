@@ -480,7 +480,7 @@ with col_left:
                 detected = auto_detect_code_column(sample_df)
                 if detected:
                     st.markdown(
-                        f"<div class='mono-notice'>Đã phát hiện cột phù hợp: <strong>{detected}</strong>.<br/>"
+                        f"<div class='mono-notice'>Đã phát hiện cột phù hợp: <strong>{detected}</strong><br/>"
                         f"Vui lòng điền tên trên vào ô Tên cột nếu chưa trùng khớp.</div>",
                         unsafe_allow_html=True,
                     )
