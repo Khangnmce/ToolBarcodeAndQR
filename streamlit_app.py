@@ -22,15 +22,11 @@ from PIL import Image
 # CAU HINH TRANG STREAMLIT
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="DV Center | Tao Ma QR & Barcode Hang Loat",
-    page_icon="https://fonts.gstatic.com/s/e/notoemoji/latest/25fc/512.png",
+    page_title="Tao Ma QR & Barcode Hang Loat",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-# ---------------------------------------------------------------------------
-# CSS TUY BIEN: TONE TRANG DEN - FONT BE VIETNAM PRO - PHONG CACH DV CENTER
-# ---------------------------------------------------------------------------
 st.markdown(
     """
     <style>
@@ -411,30 +407,6 @@ def build_zip_in_memory(
 # GIAO DIEN CHINH (UI)
 # ===========================================================================
 
-# -- BRANDING BANNER: DV CENTER CAN THO (VECTOR MONOGRAM LOGO) -------------
-st.markdown(
-    """
-    <div class="dv-brand-container">
-        <div class="dv-logo-wrapper">
-            <!-- Vector Logo Monogram DV hinh hoc phong cach DV Center Can Tho -->
-            <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Chu D: Duong thang doc va canh bo goc sac ben phai -->
-                <path d="M16 22H42C56 22 66 32 66 50C66 68 56 78 42 78H16V22Z" stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round"/>
-                <path d="M28 34H40C48 34 54 40 54 50C54 60 48 66 40 66H28V34Z" fill="#FFFFFF"/>
-                <!-- Chu V: Goc cat nghieng sac net vuon qua chu D -->
-                <path d="M50 22L70 78L88 22" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <div class="dv-brand-info">
-            <div class="dv-brand-title">DV CENTER CẦN THƠ</div>
-            <div class="dv-brand-subtitle">Hệ Thống Tạo Mã QR Code & Barcode Tập Trung</div>
-            <div class="dv-brand-tag">GIAO DIỆN TỐI GIẢN • HIỆU SUẤT CAO</div>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
 # -- BUOC 1: TAI TEP DU LIEU ------------------------------------------------
 st.markdown("<div class='section-badge'>BƯỚC 1: TẢI LÊN TỆP DỮ LIỆU</div>", unsafe_allow_html=True)
 uploaded_file = st.file_uploader(
@@ -616,14 +588,3 @@ if st.button("BẮT ĐẦU TẠO MÃ VÀ XUẤT TẬP TIN NÉN", use_container_w
                 unsafe_allow_html=True,
             )
 
-# -- FOOTER -----------------------------------------------------------------
-st.markdown("<hr/>", unsafe_allow_html=True)
-st.markdown(
-    """
-    <div style='text-align:center; color:#71717a; font-size:0.75rem; letter-spacing:0.06em; line-height:1.6;'>
-        DV CENTER CẦN THƠ &bull; BẢN QUYỀN CÔNG CỤ TẠO MÃ NỘI BỘ<br/>
-        THIẾT KẾ ĐEN TRẮNG ĐỒNG BỘ NHẬN DIỆN THƯƠNG HIỆU &bull; FONT CHỮ BE VIETNAM PRO
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
